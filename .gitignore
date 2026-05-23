@@ -8,3 +8,5 @@ coverage.out
 dist/
 playwright-report/
 test-results/
+.antigravitycli/
+
