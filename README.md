@@ -137,7 +137,7 @@ Next.js 16 App Router を基準にしたモダンなコンポーネント構成�
 | `MYSQL_DATABASE` | `appdb` | アプリケーション用データベース名。 |
 | `MYSQL_USER` | `app_user` | アプリケーションから接続する一般ユーザー名。 |
 | `MYSQL_PASSWORD` | `your_app_password_here` | アプリケーション用一般ユーザーの接続パスワード。 |
-| `MYSQL_DSN` | `app_user:password@tcp(mysql:3306)/appdb?parseTime=true&loc=Local` | Go バックエンドが MySQL に接続するための DSN (Data Source Name)。ホスト名は `mysql` (Dockerネットワーク内) にします。 |
+| `MYSQL_DSN` | `[MYSQL_USER]:[MYSQL_PASSWORD]@tcp(mysql:3306)/appdb?parseTime=true&loc=Local` | Go バックエンドが MySQL に接続するための DSN (Data Source Name)。ホスト名は `mysql` (Dockerネットワーク内) にします。 |
 | `MYSQL_EXPOSE` | `127.0.0.1:3306` | ホスト側から MySQL コンテナへ直接接続する場合のポート設定。ローカル開発以外の環境では、セキュリティのため `127.0.0.1:3306` のようにループバックアドレスに制限することを推奨します。 |
 | `MYSQL_VOLUME_NAME` | `boilerplate_mysql_dev_data` | MySQL データを永続化するための外部ボリューム名。事前に作成しておく必要があります。 |
 
