@@ -4,9 +4,10 @@
 
 テンプレートからプロジェクトを作成したのち、以下の手順に従って環境を立ち上げてください。
 
-## 最初に必要な設定と起動手順
+<!-- START_TEMPLATE_ONLY -->
+## 最初に必要な設定
 
-### 1. GitHub Actions の書き込み権限の確認 (※初回のみ)
+### GitHub Actions の書き込み権限の確認 (※初回のみ)
 初期化ワークフローがプロジェクト名への自動置換と不要ファイルのクリーンアップを完了するために、Actions の書き込み権限が必要です。
 1. 作成したリポジトリの **Settings** -> **Actions** -> **General** へ移動します。
 2. **Workflow permissions** セクションで **Read and write permissions** を選択し、保存します。
@@ -14,13 +15,13 @@
 
 ※ 実行が完了すると、自動的にすべてのファイル内の `boilerplate` 文字列が本リポジトリ名に置換され、初期化ワークフロー定義ファイル自身も自動的に削除されます。
 
-### 2. ローカル環境のセットアップと起動
-初期化完了後、ローカル環境でプロジェクトを起動します。
+---
+<!-- END_TEMPLATE_ONLY -->
 
-1. **リポジトリのクローンと環境変数のコピー:**
+## ローカル環境のセットアップと起動
+
+1. **環境変数のコピー:**
    ```bash
-   git clone <作成したリポジトリのURL>
-   cd <リポジトリ名>
    cp .env.example .env
    cp .env.e2e.example .env.e2e
    ```
@@ -42,3 +43,11 @@
 コンテナ起動後、ブラウザで以下のアドレスにアクセスして接続ステータス（API、DB、Redis）を確認できます。
 - **ダッシュボード:** [http://localhost:8080](http://localhost:8080)
 - **Frontend 開発サーバー:** [http://localhost:3000](http://localhost:3000)
+
+---
+
+## デプロイ（Staging / Production）について
+
+本プロジェクトには自動デプロイ用のワークフロー（`.github/workflows/deploy.yml`）が用意されています。デプロイ環境を構築する際は、GitHub Actions の Environment に必要な環境変数およびシークレットを設定してください。
+
+必要な設定項目については、`.env.example`の末尾にある `GitHub Actions / CD (Deploy) Settings` セクションを参照してください。

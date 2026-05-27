@@ -40,6 +40,12 @@ jobs:
         run: |
           echo "Replacing 'boilerplate' with ${REPO_NAME_LOWER} / ${REPO_NAME_CAP} / ${REPO_NAME_UPPER}"
 
+          # README.mdからテンプレート用の初期設定セクションを削除
+          if [ -f README.md ]; then
+            echo "Cleaning up README.md template section..."
+            perl -0777 -pi -e 's/<!-- START_TEMPLATE_ONLY -->.*?<!-- END_TEMPLATE_ONLY -->\n*//gs' README.md
+          fi
+
           # テキストファイルのみを対象に置換処理を実行
           find . \
             -type f \
