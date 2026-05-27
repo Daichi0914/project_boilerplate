@@ -1,0 +1,8 @@
+# ローカルデータ
+data/
+
+# バージョン管理・Docker設定
+.git
+.gitignore
+.dockerignore
+Dockerfile

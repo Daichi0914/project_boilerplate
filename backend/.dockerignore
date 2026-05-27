@@ -1,0 +1,27 @@
+# Goバイナリおよび実行可能ファイル
+main
+backend
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# 依存関係
+vendor/
+
+# テスト結果・カバレッジ・プロファイリング
+*.test
+*.out
+coverage.out
+*.prof
+
+# ログファイル
+*.log
+
+# バージョン管理・Docker設定
+.git
+.gitignore
+.dockerignore
+Dockerfile
+README.md
