@@ -91,12 +91,11 @@ jobs:
           echo "GHCR_REPO=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
           echo "PROJECT_NAME=$(basename "${GITHUB_REPOSITORY,,}")" >> $GITHUB_ENV
 
-      # --- ソースコードをチェックアウトせず、compose.yaml のみを取得 ---
       - name: Download compose.yaml
-          uses: actions/download-artifact@v4
-          with:
-            name: compose-file
-            path: ~/projects/${{ env.PROJECT_NAME }}
+        uses: actions/download-artifact@v4
+        with:
+          name: compose-file
+          path: ~/projects/${{ env.PROJECT_NAME }}
 
       - name: Create environment files
         run: |
