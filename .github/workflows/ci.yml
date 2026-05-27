@@ -118,11 +118,12 @@ jobs:
         run: |
           cp .env.example .env
           GHCR_REPO=${GITHUB_REPOSITORY,,}
+          REPO_NAME=$(basename "${GHCR_REPO}")
           echo "GHCR_REPO=${GHCR_REPO}" >> .env
           sed -i 's|APP_ENV=.*|APP_ENV=dev|' .env
           sed -i 's|ALLOWED_ORIGIN=.*|ALLOWED_ORIGIN=http://localhost:3001|' .env
-          sed -i 's|MYSQL_VOLUME_NAME=.*|MYSQL_VOLUME_NAME=boilerplate_mysql_dev_data|' .env
-          sed -i 's|REDIS_VOLUME_NAME=.*|REDIS_VOLUME_NAME=boilerplate_redis_dev_data|' .env
+          sed -i "s|MYSQL_VOLUME_NAME=.*|MYSQL_VOLUME_NAME=${REPO_NAME}_mysql_dev_data|" .env
+          sed -i "s|REDIS_VOLUME_NAME=.*|REDIS_VOLUME_NAME=${REPO_NAME}_redis_dev_data|" .env
           sed -i 's|MYSQL_ROOT_PASSWORD=.*|MYSQL_ROOT_PASSWORD=ci_test_password|' .env
           sed -i 's|MYSQL_USER=.*|MYSQL_USER=app_user|' .env
           sed -i 's|MYSQL_PASSWORD=.*|MYSQL_PASSWORD=ci_test_password|' .env
@@ -140,8 +141,8 @@ jobs:
           wait
           
           touch ./.htpasswd
-          docker volume create boilerplate_mysql_dev_data || true
-          docker volume create boilerplate_redis_dev_data || true
+          docker volume create ${REPO_NAME}_mysql_dev_data || true
+          docker volume create ${REPO_NAME}_redis_dev_data || true
           docker compose -f compose.yaml up -d --wait --scale cloudflared=0
 
       - name: Run E2E Tests

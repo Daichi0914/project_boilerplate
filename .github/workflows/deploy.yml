@@ -86,26 +86,28 @@ jobs:
       TARGET_ENV: ${{ inputs.target_env || 'stg' }}
 
     steps:
+      - name: Setup environment variables
+        run: |
+          echo "GHCR_REPO=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
+          echo "PROJECT_NAME=$(basename "${GITHUB_REPOSITORY,,}")" >> $GITHUB_ENV
+
       # --- ソースコードをチェックアウトせず、compose.yaml のみを取得 ---
       - name: Download compose.yaml
-        uses: actions/download-artifact@v4
-        with:
-          name: compose-file
-          path: ~/projects/boilerplate
-
-      - name: Lowercase repository name
-        run: echo "GHCR_REPO=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
+          uses: actions/download-artifact@v4
+          with:
+            name: compose-file
+            path: ~/projects/${{ env.PROJECT_NAME }}
 
       - name: Create environment files
         run: |
-          cd ~/projects/boilerplate
+          cd ~/projects/${{ env.PROJECT_NAME }}
           cat << EOF > .env.${{ env.TARGET_ENV }}
           APP_ENV=${{ env.TARGET_ENV }}
           NODE_ENV=production
           RESTART_POLICY=always
           GHCR_REPO=${{ env.GHCR_REPO }}
-          MYSQL_VOLUME_NAME=boilerplate-${{ env.TARGET_ENV }}_mysql_${{ env.TARGET_ENV }}_data
-          REDIS_VOLUME_NAME=boilerplate-${{ env.TARGET_ENV }}_redis_${{ env.TARGET_ENV }}_data
+          MYSQL_VOLUME_NAME=${{ env.PROJECT_NAME }}-${{ env.TARGET_ENV }}_mysql_${{ env.TARGET_ENV }}_data
+          REDIS_VOLUME_NAME=${{ env.PROJECT_NAME }}-${{ env.TARGET_ENV }}_redis_${{ env.TARGET_ENV }}_data
           NGINX_PORT=${{ env.TARGET_ENV == 'prod' && '8000' || '8080' }}
           MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
           MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}
@@ -126,8 +128,8 @@ jobs:
 
       - name: Ensure External Volumes Exist
         run: |
-          podman volume create boilerplate-${{ env.TARGET_ENV }}_mysql_${{ env.TARGET_ENV }}_data || true
-          podman volume create boilerplate-${{ env.TARGET_ENV }}_redis_${{ env.TARGET_ENV }}_data || true
+          podman volume create ${{ env.PROJECT_NAME }}-${{ env.TARGET_ENV }}_mysql_${{ env.TARGET_ENV }}_data || true
+          podman volume create ${{ env.PROJECT_NAME }}-${{ env.TARGET_ENV }}_redis_${{ env.TARGET_ENV }}_data || true
 
       - name: Log in to GHCR via Podman
         run: |
@@ -135,14 +137,14 @@ jobs:
 
       - name: Deploy via Systemd
         run: |
-          cd ~/projects/boilerplate
+          cd ~/projects/${{ env.PROJECT_NAME }}
           export XDG_RUNTIME_DIR=/run/user/$(id -u)
           
           # GHCRから最新イメージを明示的に取得
-          podman-compose -p boilerplate-${{ env.TARGET_ENV }} --env-file .env.${{ env.TARGET_ENV }} pull
+          podman-compose -p ${{ env.PROJECT_NAME }}-${{ env.TARGET_ENV }} --env-file .env.${{ env.TARGET_ENV }} pull
           
           systemctl --user daemon-reload
-          systemctl --user restart boilerplate-${{ env.TARGET_ENV }}.service
+          systemctl --user restart ${{ env.PROJECT_NAME }}-${{ env.TARGET_ENV }}.service
 
       - name: Cleanup old images
         run: podman image prune -af --filter "until=24h"

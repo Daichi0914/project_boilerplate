@@ -47,7 +47,7 @@ jobs:
             ! -path "./node_modules/*" \
             ! -path "./.next/*" \
             ! -path "./.antigravitycli/*" \
-            ! -path "./.github/workflows/initialize_boilerplate.yml" \
+            ! -path "./.github/workflows/*" \
             ! -name "*.png" \
             ! -name "*.jpg" \
             ! -name "*.jpeg" \
